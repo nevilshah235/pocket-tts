@@ -2,6 +2,7 @@ from typing import NamedTuple
 
 import torch
 import torch.nn as nn
+from einops import rearrange
 from torch.nn import functional as F
 from typing_extensions import Self
 
@@ -103,24 +104,18 @@ class MimiStreamingMultiheadAttention(StatefulModule):
 
         projected = self.in_proj(query)
 
-        # Refactored: Replace einops.rearrange with view + unbind
-        # Original: rearrange(projected, "b t (p h d) -> p b h t d", p=3, h=self.num_heads)
-        # Original einops gives [3, B, H, T, D], then unpacks to three [B, H, T, D] tensors
-        # projected shape: [B, T, 3*H*D]
-        d = self.embed_dim // self.num_heads
-        packed = projected.view(B, T, 3, self.num_heads, d)  # [B, T, 3, H, D]
-        q, k, v = torch.unbind(packed, dim=2)  # Each: [B, T, H, D]
-        # Note: After unbind, we have [B, T, H, D] which is the shape rope expects
-        # Original code permutes from [B, H, T, D] to [B, T, H, D] for rope
-        # So we can use q, k, v directly for rope, then permute to [B, H, T, D] for _complete_kv
+        q, k, v = rearrange(projected, "b t (p h d) -> p b h t d", p=3, h=self.num_heads)
+
+        # Permute from [b, h, t, d] to [b, t, h, d] for rope
+        q = q.permute(0, 2, 1, 3)
+        k = k.permute(0, 2, 1, 3)
         # Handle offset: rope expects scalar or broadcastable tensor, but offset is [B]
         # Use offset[0] assuming all batches have the same offset (typical for streaming)
         rope_offset = offset[0] if isinstance(offset, torch.Tensor) and offset.numel() > 1 else offset
-        q, k = self.rope(q, k, rope_offset)  # Input and output: [B, T, H, D]
-        # Permute to [B, H, T, D] for _complete_kv (which expects [B, H, T, D])
-        q = q.permute(0, 2, 1, 3)  # [B, H, T, D]
-        k = k.permute(0, 2, 1, 3)  # [B, H, T, D]
-        v = v.permute(0, 2, 1, 3)  # [B, H, T, D]
+        q, k = self.rope(q, k, rope_offset)
+        # Permute back from [b, t, h, d] to [b, h, t, d]
+        q = q.permute(0, 2, 1, 3)
+        k = k.permute(0, 2, 1, 3)
 
         k, v, pos_k = self._complete_kv(k, v, model_state)
         pos_k = pos_k[:, None]
@@ -134,11 +129,7 @@ class MimiStreamingMultiheadAttention(StatefulModule):
 
         x = F.scaled_dot_product_attention(q, k, v, attn_bias, dropout_p=0.0)
 
-        # Refactored: Replace einops.rearrange with permute + reshape
-        # Original: rearrange(x, "b h t d -> b t (h d)")
-        # x shape: [B, H, T, D]
-        x = x.permute(0, 2, 1, 3)  # [B, T, H, D]
-        x = x.reshape(B, T, self.num_heads * d)  # [B, T, H*D]
+        x = rearrange(x, "b h t d -> b t (h d)")
         x = self.out_proj(x)
         return x
 

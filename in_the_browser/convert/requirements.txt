@@ -1,0 +1,4 @@
+# Additional dependencies for ONNX conversion
+# These are in addition to the main project dependencies
+
+onnxscript>=0.1.0  # Required for PyTorch ONNX export

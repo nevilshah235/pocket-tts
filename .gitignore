@@ -81,8 +81,14 @@ profile_output*
 *.wav
 *.model
 *.pt
+*.onnx
+*.onnx.data
 
 # Agents files, use a symlink to AGENTS.md instead. 
 CLAUDE.md
 QWEN.md
 .claude/
+
+# Cursor plan files
+*.plan.md
+.cursor/
