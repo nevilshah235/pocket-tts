@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pocket TTS In-Browser Demo</title>
+</head>
+<body>
+  <h1>Pocket TTS Browser Demo</h1>
+  <p>Enter text below and click Speak to play the audio.</p>
+  <textarea id="text-input" rows="4" cols="50"></textarea><br>
+  <button id="speak-button">Speak</button>
+  <p id="status"></p>
+  <script>
+    // TODO: integrate ONNX Runtime or other model code
+    document.getElementById('speak-button').addEventListener('click', function() {
+      var text = document.getElementById('text-input').value;
+      document.getElementById('status').innerText = 'Feature not yet implemented.';
+    });
+  </script>
+</body>
+</html>
