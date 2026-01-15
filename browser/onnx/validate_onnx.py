@@ -19,14 +19,14 @@ import torch.nn.functional as F
 
 from pocket_tts import TTSModel
 from pocket_tts.conditioners.base import TokenizedText
-from in_the_browser.convert.model_wrappers import (
+from browser.onnx.model_wrappers import (
     StatelessFlowNetworkWrapper,
     StatelessTextConditionerWrapper,
     StatelessMimiEncoderWrapper,
     StatelessFlowLMBackboneWrapper,
     StatelessMimiDecoderWrapper,
 )
-from in_the_browser.convert.state_utils import build_flow_lm_state_schema
+from browser.onnx.state_utils import build_flow_lm_state_schema
 from pocket_tts.modules.stateful_module import init_states, increment_steps
 
 logging.basicConfig(level=logging.INFO)

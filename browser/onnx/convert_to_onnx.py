@@ -4,7 +4,7 @@ This script exports the pocket-tts models to ONNX format, splitting them into
 logical components that can be loaded and run in the browser using ONNX Runtime Web.
 
 Usage:
-    python convert_to_onnx.py --variant b6369a24 --output-dir in_the_browser/models/
+    python convert_to_onnx.py --variant b6369a24 --output-dir browser/models/
 """
 
 import argparse
@@ -313,7 +313,7 @@ def main():
     parser.add_argument(
         "--output-dir",
         type=str,
-        default="in_the_browser/models",
+        default="browser/models",
         help="Output directory for ONNX models",
     )
     parser.add_argument(

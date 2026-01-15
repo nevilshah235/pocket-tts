@@ -5,9 +5,9 @@ This directory contains the browser-based implementation of pocket-tts, using ON
 ## Structure
 
 ```
-in_the_browser/
+browser/
 ├── index.html          # Web interface (placeholder for Phase 3)
-├── convert/            # ONNX conversion scripts and utilities
+├── onnx/               # ONNX conversion scripts and utilities
 │   ├── convert_to_onnx.py    # Main conversion script
 │   ├── model_wrappers.py     # Stateless model wrappers
 │   ├── state_utils.py        # State flattening utilities
@@ -33,7 +33,7 @@ Phase 1 is complete. All 5 model components have been successfully converted to 
 - ✅ Mimi Decoder (latent → audio with state flattening)
 - ✅ Text Conditioner (tokenization and embedding)
 
-See `convert/README.md` for detailed information about the conversion process.
+See `onnx/README.md` for detailed information about the conversion process.
 
 ## Phase 2: JavaScript Runtime (Next)
 
@@ -58,17 +58,17 @@ The web interface will provide:
 
 ```bash
 # Export all components
-python in_the_browser/convert/convert_to_onnx.py --variant b6369a24 --output-dir in_the_browser/models/
+python browser/onnx/convert_to_onnx.py --variant b6369a24 --output-dir browser/models/
 
 # Validate exported models
-python in_the_browser/convert/test_all_models.py --model-dir in_the_browser/models/
+python browser/onnx/test_all_models.py --model-dir browser/models/
 ```
 
 ### Testing
 
 ```bash
 # Run conversion tests
-uv run pytest in_the_browser/convert/tests/ -v
+uv run pytest browser/onnx/tests/ -v
 ```
 
 ## Model Files
@@ -78,4 +78,4 @@ The ONNX model files are large (hundreds of MB) and should be:
 - Downloaded on-demand from a CDN, or
 - Excluded from git (add to `.gitignore`)
 
-See `convert/README.md` for more details about the conversion process and state management strategy.
+See `onnx/README.md` for more details about the conversion process and state management strategy.

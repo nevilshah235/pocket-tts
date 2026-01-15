@@ -8,7 +8,7 @@ This script validates all 5 Phase 1 ONNX models:
 5. mimi_decoder
 
 Usage:
-    python test_all_models.py [--model-dir in_the_browser/models] [--variant b6369a24]
+    python test_all_models.py [--model-dir browser/models] [--variant b6369a24]
 """
 
 import argparse
@@ -16,7 +16,7 @@ import logging
 import sys
 from pathlib import Path
 
-from in_the_browser.convert.validate_onnx import (
+from browser.onnx.validate_onnx import (
     validate_flow_network,
     validate_text_conditioner,
     validate_mimi_encoder,
@@ -37,7 +37,7 @@ def main():
     parser.add_argument(
         "--model-dir",
         type=str,
-        default="in_the_browser/models",
+        default="browser/models",
         help="Directory containing ONNX model files",
     )
     parser.add_argument(

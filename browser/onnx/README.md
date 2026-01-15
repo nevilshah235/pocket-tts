@@ -37,10 +37,10 @@ The original models use stateful modules (KV caches, conv buffers) that maintain
 
 ```bash
 # Export all components
-python in_the_browser/convert/convert_to_onnx.py --variant b6369a24 --output-dir in_the_browser/models/
+python browser/onnx/convert_to_onnx.py --variant b6369a24 --output-dir browser/models/
 
 # Export specific components
-python in_the_browser/convert/convert_to_onnx.py --components flow_net text_conditioner mimi_encoder
+python browser/onnx/convert_to_onnx.py --components flow_net text_conditioner mimi_encoder
 ```
 
 ### Options
@@ -72,13 +72,13 @@ Run the equivalence tests to verify refactoring:
 
 ```bash
 # Test einops equivalence
-uv run pytest in_the_browser/convert/tests/test_equivalence.py -v
+uv run pytest browser/onnx/tests/test_equivalence.py -v
 
 # Test module outputs
-uv run pytest in_the_browser/convert/tests/test_module_outputs.py -v
+uv run pytest browser/onnx/tests/test_module_outputs.py -v
 
 # Test refactored vs original
-uv run pytest in_the_browser/convert/tests/test_refactored_module_values.py -v
+uv run pytest browser/onnx/tests/test_refactored_module_values.py -v
 ```
 
 ## Next Steps
