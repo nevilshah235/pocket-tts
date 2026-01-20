@@ -142,11 +142,12 @@ def text_to_speech(
             raise HTTPException(
                 status_code=400, detail="voice_url must start with http://, https://, or hf://"
             )
-        model_state = tts_model._cached_get_state_for_audio_prompt(voice_url, truncate=True)
+        model_state = tts_model._cached_get_state_for_audio_prompt(voice_url)
         logging.warning("Using voice from URL: %s", voice_url)
     elif voice_wav is not None:
-        # Use uploaded voice file
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_file:
+        # Use uploaded voice file - preserve extension for format detection
+        suffix = Path(voice_wav.filename).suffix if voice_wav.filename else ".wav"
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
             content = voice_wav.file.read()
             temp_file.write(content)
             temp_file.flush()
@@ -248,8 +249,12 @@ def generate(
         # Only print the result message if not writing to stdout
         if output_path != "-":
             logger.info("Results written in %s", output_path)
+        logger.info("-" * 20)
         logger.info(
             "If you want to try multiple voices and prompts quickly, try the `serve` command."
+        )
+        logger.info(
+            "If you like Kyutai projects, comment, like, subscribe at https://x.com/kyutai_labs"
         )
 
 
